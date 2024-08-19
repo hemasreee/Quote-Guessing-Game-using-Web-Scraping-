@@ -1,0 +1,32 @@
+import requests
+from bs4 import BeautifulSoup
+import random
+
+def get_quotes():
+    url = "http://quotes.toscrape.com/"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    quotes = []
+    for quote in soup.find_all('div', class_='quote'):
+        text = quote.find('span', class_='text').get_text()
+        author = quote.find('small', class_='author').get_text()
+        quotes.append({'text': text, 'author': author})
+    
+    return quotes
+
+def play_game(quotes):
+    quote = random.choice(quotes)
+    print("Here's a quote:\n")
+    print(quote['text'])
+    
+    guess = input("\nWho said this? ").strip()
+    
+    if guess.lower() == quote['author'].lower():
+        print("\nCorrect! Well done.")
+    else:
+        print(f"\nWrong! The correct answer was {quote['author']}.")
+
+if __name__ == "__main__":
+    quotes = get_quotes()
+    play_game(quotes)
